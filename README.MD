@@ -8,6 +8,6 @@ A very fast KDTree(nanoflann) for Autolisp
 - (kdtreeradiusSearch point3d radius)
 - (kdtreeknnSearch point3d num_search)
 - (kdtreepoints)
-- (kdtreepoints)
+- (kdtreedestroy)
 
 search return value is ((indexs)(distances))
