@@ -103,3 +103,183 @@ resbuf* AcGePoint3dTree::resultToResbuf(const AcGePoint3dTreeResult& knnresult)
     }
     return pResultHead;
 }
+
+//-----------------------------------------------------------------------------------------
+//AcGePoint3dTreeWrapper
+int AcGePoint3dTreeWrapper::kdtreecreate()
+{
+    AcResBufPtr pArgs(acedGetArgs());
+    if (pkdTree == nullptr)
+    {
+        size_t _size = 0;
+        for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+            _size++;
+
+        AcGePoint3dVector pnts;
+        pnts.reserve(_size);
+
+        for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+        {
+            if (pTail->restype == RT3DPOINT)
+                pnts.push_back(asPnt3d(pTail->resval.rpoint));
+        }
+        pkdTree.reset(new AcGePoint3dTree(std::move(pnts)));
+        acedRetT();
+    }
+    else
+    {
+        acedRetNil();
+    }
+    return RSRSLT;
+}
+
+int AcGePoint3dTreeWrapper::kdtreeradiusSearch()
+{
+    AcResBufPtr pArgs(acedGetArgs());
+    if (pkdTree != nullptr)
+    {
+        int argNum = 0;
+        int argNumFound = 0;
+        double radius = 0.0;
+        AcGePoint3d searchPoint;
+        for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+        {
+            switch (argNum)
+            {
+                case 0:
+                {
+                    if (pTail->restype == RT3DPOINT)
+                    {
+                        searchPoint = asPnt3d(pTail->resval.rpoint);
+                        argNumFound++;
+                    }
+                    break;
+                }
+                case 1:
+                {
+                    if (pTail->restype == RTSHORT)
+                    {
+                        radius = pTail->resval.rint;
+                        argNumFound++;
+                    }
+                    else if (pTail->restype == RTLONG)
+                    {
+                        radius = pTail->resval.rlong;
+                        argNumFound++;
+                    }
+                    else if (pTail->restype == RTREAL)
+                    {
+                        radius = pTail->resval.rreal;
+                        argNumFound++;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            argNum++;
+        }
+        if (argNumFound == 2)
+        {
+            auto knnresult = pkdTree->radiusSearch(searchPoint, radius);
+            AcResBufPtr pResult(AcGePoint3dTree::resultToResbuf(knnresult));
+            acedRetList(pResult.get());
+        }
+    }
+    else
+    {
+        acedRetNil();
+    }
+    return RSRSLT;
+}
+
+int AcGePoint3dTreeWrapper::kdtreeknnSearch()
+{
+    AcResBufPtr pArgs(acedGetArgs());
+    if (pkdTree != nullptr)
+    {
+        int argNum = 0;
+        int argNumFound = 0;
+        int num_closest = 1;
+        AcGePoint3d searchPoint;
+        for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+        {
+            switch (argNum)
+            {
+                case 0:
+                {
+                    if (pTail->restype == RT3DPOINT)
+                    {
+                        searchPoint = asPnt3d(pTail->resval.rpoint);
+                        argNumFound++;
+                    }
+                    break;
+                }
+                case 1:
+                {
+                    if (pTail->restype == RTSHORT)
+                    {
+                        num_closest = pTail->resval.rint;
+                        argNumFound++;
+                    }
+                    else if (pTail->restype == RTLONG)
+                    {
+                        num_closest = pTail->resval.rlong;
+                        argNumFound++;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            argNum++;
+        }
+        if (argNumFound == 2)
+        {
+            auto knnresult = pkdTree->knnSearch(searchPoint, num_closest);
+            AcResBufPtr pResult(AcGePoint3dTree::resultToResbuf(knnresult));
+            acedRetList(pResult.get());
+        }
+    }
+    else
+    {
+        acedRetNil();
+    }
+    return RSRSLT;
+}
+
+int AcGePoint3dTreeWrapper::kdtreepoints()
+{
+    constexpr const size_t AcGePoint3dSize = sizeof(AcGePoint3d);
+    if (pkdTree != nullptr)
+    {
+        AcResBufPtr pResult(acutNewRb(RTLB));
+        resbuf* pResultTail = pResult.get();
+        for (const auto& item : pkdTree->inputPoints())
+        {
+            pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
+            memcpy_s(pResultTail->resval.rpoint, AcGePoint3dSize, asDblArray(item), AcGePoint3dSize);
+        }
+        pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+        acedRetList(pResult.get());
+    }
+    else
+    {
+        acedRetNil();
+    }
+    return RSRSLT;
+}
+
+int AcGePoint3dTreeWrapper::kdtreedestroy()
+{
+    if (pkdTree != nullptr)
+    {
+        pkdTree.reset();
+        acedRetT();
+    }
+    else
+    {
+        acedRetNil();
+    }
+    return RSRSLT;
+}

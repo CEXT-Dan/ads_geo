@@ -50,3 +50,17 @@ private:
     std::unique_ptr<kd_tree3d_t> mpTree;
 };
 
+//-----------------------------------------------------------------------------------------
+//AcGePoint3dTreeWrapper
+class AcGePoint3dTreeWrapper
+{
+public:
+    static int kdtreecreate();
+    static int kdtreeradiusSearch();
+    static int kdtreeknnSearch();
+    static int kdtreepoints();
+    static int kdtreedestroy();
+
+private:
+    inline static std::unique_ptr<AcGePoint3dTree> pkdTree;
+};

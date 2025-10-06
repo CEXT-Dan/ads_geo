@@ -41,11 +41,9 @@
 //----- ObjectARX EntryPoint
 class ArxAdsGeo : public AcRxArxApp
 {
-    inline static std::unique_ptr<AcGePoint3dTree> pkdTree;
 public:
     ArxAdsGeo() : AcRxArxApp()
     {
-        pkdTree.reset();
     }
     virtual AcRx::AppRetCode On_kInitAppMsg(void* pkt)
     {
@@ -56,7 +54,6 @@ public:
     virtual AcRx::AppRetCode On_kUnloadAppMsg(void* pkt)
     {
         AcRx::AppRetCode retCode = AcRxArxApp::On_kUnloadAppMsg(pkt);
-        pkdTree.reset();
         return (retCode);
     }
 
@@ -66,186 +63,33 @@ public:
 
     static int ADSPREFIX(kdtreecreate(void))
     {
-        AcResBufPtr pArgs(acedGetArgs());
-        if (pkdTree == nullptr)
-        {
-            size_t _size = 0;
-            for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-                _size++;
-            
-            AcGePoint3dVector pnts;
-            pnts.reserve(_size);
-
-            for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-            {
-                if (pTail->restype == RT3DPOINT)
-                    pnts.push_back(asPnt3d(pTail->resval.rpoint));
-            }
-            pkdTree.reset(new AcGePoint3dTree(std::move(pnts)));
-            acedRetT();
-        }
-        else
-        {
-            acedRetNil();
-        }
-        return RSRSLT;
+        return AcGePoint3dTreeWrapper::kdtreecreate();
     }
 
     static int ADSPREFIX(kdtreeradiusSearch(void))
     {
-        AcResBufPtr pArgs(acedGetArgs());
-        if (pkdTree != nullptr)
-        {
-            int numArgs = 0;
-            int numArgsFound = 0;
-            int radius = 0;
-            AcGePoint3d searchPoint;
-            for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-            {
-                switch (numArgs)
-                {
-                    case 0:
-                    {
-                        if (pTail->restype == RT3DPOINT)
-                        {
-                            searchPoint = asPnt3d(pTail->resval.rpoint);
-                            numArgsFound++;
-                        }
-                        break;
-                    }
-                    case 1:
-                    {
-                        if (pTail->restype == RTSHORT)
-                        {
-                            radius = pTail->resval.rint;
-                            numArgsFound++;
-                        }
-                        else if (pTail->restype == RTLONG)
-                        {
-                            radius = pTail->resval.rlong;
-                            numArgsFound++;
-                        }
-                        else if (pTail->restype == RTREAL)
-                        {
-                            radius = pTail->resval.rreal;
-                            numArgsFound++;
-                        }
-                        break;
-                    }
-                    default:
-                        break;
-                }
-                numArgs++;
-            }
-            if (numArgsFound == 2)
-            {
-                auto knnresult = pkdTree->radiusSearch(searchPoint, radius);
-                AcResBufPtr pResult(AcGePoint3dTree::resultToResbuf(knnresult));
-                acedRetList(pResult.get());
-            }
-        }
-        else
-        {
-            acedRetNil();
-        }
-        return RSRSLT;
+        return AcGePoint3dTreeWrapper::kdtreeradiusSearch();
     }
 
     static int ADSPREFIX(kdtreeknnSearch(void))
     {
-        AcResBufPtr pArgs(acedGetArgs());
-        if (pkdTree != nullptr)
-        {
-            int numArgs = 0;
-            int numArgsFound = 0;
-            int num_closest = 1;
-            AcGePoint3d searchPoint;
-            for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-            {
-                switch (numArgs)
-                {
-                    case 0:
-                    {
-                        if (pTail->restype == RT3DPOINT)
-                        {
-                            searchPoint = asPnt3d(pTail->resval.rpoint);
-                            numArgsFound++;
-                        }
-                        break;
-                    }
-                    case 1:
-                    {
-                        if (pTail->restype == RTSHORT)
-                        {
-                            num_closest = pTail->resval.rint;
-                            numArgsFound++;
-                        }
-                        else if (pTail->restype == RTLONG)
-                        {
-                            num_closest = pTail->resval.rlong;
-                            numArgsFound++;
-                        }
-                        break;
-                    }
-                    default:
-                        break;
-                }
-                numArgs++;
-            }
-            if (numArgsFound == 2)
-            {
-                auto knnresult = pkdTree->knnSearch(searchPoint, num_closest);
-                AcResBufPtr pResult(AcGePoint3dTree::resultToResbuf(knnresult));
-                acedRetList(pResult.get());
-            }
-        }
-        else
-        {
-            acedRetNil();
-        }
-        return RSRSLT;
+        return AcGePoint3dTreeWrapper::kdtreeknnSearch();
     }
 
     static int ADSPREFIX(kdtreepoints(void))
     {
-        constexpr const size_t AcGePoint3dSize = sizeof(AcGePoint3d);
-        if (pkdTree != nullptr)
-        {
-            AcResBufPtr pResult(acutNewRb(RTLB));
-            resbuf* pResultTail = pResult.get();
-            for (const auto& item : pkdTree->inputPoints())
-            {
-                pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
-                memcpy_s(pResultTail->resval.rpoint, AcGePoint3dSize, asDblArray(item), AcGePoint3dSize);
-            }
-            pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
-            acedRetList(pResult.get());
-        }
-        else
-        {
-            acedRetNil();
-        }
-        return RSRSLT;
+        return AcGePoint3dTreeWrapper::kdtreepoints();
     }
 
     static int ADSPREFIX(kdtreedestroy(void))
     {
-        if (pkdTree != nullptr)
-        {
-            pkdTree.reset();
-            acedRetT();
-        }
-        else
-        {
-            acedRetNil();
-        }
-        return RSRSLT;
+        return AcGePoint3dTreeWrapper::kdtreedestroy();
     }
-
 };
 
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(ArxAdsGeo)
+#pragma warning ( push )
 #pragma warning( disable: 4838 )
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreecreate, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreeradiusSearch, false)
