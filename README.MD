@@ -1,6 +1,6 @@
 # KDTree for Autolisp
 
-A very fast KDTree(nanoflann) for Autolisp
+A very fast KDTree(nanoflann) for Autolisp in ObjectARX
 
 ## lisp functions
 
@@ -11,3 +11,7 @@ A very fast KDTree(nanoflann) for Autolisp
 - (kdtreedestroy)
 
 search return value is ((indexs)(distances))
+
+## install
+
+appload the arx in the releases
