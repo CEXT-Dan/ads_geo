@@ -45,6 +45,7 @@ public:
     ArxAdsGeo() : AcRxArxApp()
     {
     }
+
     virtual AcRx::AppRetCode On_kInitAppMsg(void* pkt)
     {
         AcRx::AppRetCode retCode = AcRxArxApp::On_kInitAppMsg(pkt);
