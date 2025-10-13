@@ -2,7 +2,7 @@
 
 A very fast KDTree(nanoflann) for Autolisp in ObjectARX
 
-## lisp functions
+## tree functions
 
 - (kdtreecreate listOfPoints)
 - (kdtreeradiusSearch point3d radius)
@@ -11,6 +11,16 @@ A very fast KDTree(nanoflann) for Autolisp in ObjectARX
 - (kdtreedestroy)
 
 search return value is ((indexs)(distances))
+
+## map functions
+(mapclear)
+(mapinsert key value)
+(mapgetat key value)
+(mapcontains key)
+(mapgetall)
+
+Allowed types for key or value (int, double, ename, point2d, point3d, string)
+
 
 ## install
 
