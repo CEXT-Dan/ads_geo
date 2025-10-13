@@ -13,6 +13,9 @@ A very fast KDTree(nanoflann) for Autolisp in ObjectARX
 search return value is ((indexs)(distances))
 
 ## map functions
+
+Wraps std::unordered_map for AutoLisp. While the key can be any of the lisp types listed, the intent to have a fast hash key for 3d points
+
 - (mapclear)
 - (mapinsert key value)
 - (mapgetat key value)
@@ -21,12 +24,11 @@ search return value is ((indexs)(distances))
 
 Allowed types for key or value (int, double, ename, point2d, point3d, string)
 
-
 ## install
 
 appload the arx in the releases
 
 ## Supported platforms
 
-* AutoCAD 2025-2026
-* if you don't see a version for your platform, create an issue
+- AutoCAD 2025-2026
+- if you don't see a version for your platform, create an issue
