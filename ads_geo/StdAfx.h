@@ -141,5 +141,82 @@ using AcResBufPtr = std::unique_ptr < resbuf, decltype([](resbuf* ptr) noexcept
         acutRelRb(ptr);
     }) > ;
 
+
+inline static double roundPointComponentToGTol(double value)
+{
+    const double precision = AcGeContext::gTol.equalPoint();
+    return std::round(value / precision) * precision;
+}
+
+//boost
+template<std::size_t Bits> struct hash_mix_impl;
+
+template<> struct hash_mix_impl<64>
+{
+    inline static std::uint64_t fn(std::uint64_t x)
+    {
+        std::uint64_t const m = 0xe9846af9b1a615d;
+        x ^= x >> 32;
+        x *= m;
+        x ^= x >> 32;
+        x *= m;
+        x ^= x >> 28;
+        return x;
+    }
+};
+
+static inline std::size_t hash_mix(std::size_t v)
+{
+    return hash_mix_impl<sizeof(std::size_t) * CHAR_BIT>::fn(v);
+}
+
+template <class T>
+inline void hash_combine(std::size_t& seed, T const& v)
+{
+    seed = hash_mix(seed + 0x9e3779b9 + std::hash<T>()(v));
+}
+
+namespace std
+{
+    template <>
+    struct hash<AcGePoint2d>
+    {
+        size_t operator()(const AcGePoint2d& p) const
+        {
+            std::size_t seed = 0;
+            hash_combine(seed, roundPointComponentToGTol(p.x));
+            hash_combine(seed, roundPointComponentToGTol(p.y));
+            return seed;
+        }
+    };
+
+    template <>
+    struct hash<AcGePoint3d>
+    {
+        size_t operator()(const AcGePoint3d& p) const
+        {
+            std::size_t seed = 0;
+            hash_combine(seed, roundPointComponentToGTol(p.x));
+            hash_combine(seed, roundPointComponentToGTol(p.y));
+            hash_combine(seed, roundPointComponentToGTol(p.z));
+            return seed;
+        }
+    };
+
+    template <>
+    struct hash<AcDbObjectId>
+    {
+        size_t operator()(const AcDbObjectId& id) const
+        {
+            std::size_t seed = 0;
+            hash_combine(seed, id.asOldId());
+            return seed;
+        }
+    };
+}
+
+using AdsObject = std::variant<std::monostate, int, double, AcDbObjectId, AcGePoint2d, AcGePoint3d, std::wstring>;
+typedef std::unordered_map<AdsObject, AdsObject> AdsObjectMap;
+
 #pragma pack (pop)
 

@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClCompile Include="AcGePoint3dTreeAdapter.cpp" />
     <ClCompile Include="acrxEntryPoint.cpp" />
+    <ClCompile Include="AdsMap.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DocData.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcGePoint3dTreeAdapter.h" />
+    <ClInclude Include="AdsMap.h" />
     <ClInclude Include="DocData.h" />
     <ClInclude Include="nanoflann.hpp" />
     <ClInclude Include="Resource.h" />
