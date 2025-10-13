@@ -7,7 +7,7 @@ static resbuf* AdsObjectToResbuf(const AdsObject& adso)
     {
         case 0:
         {
-            return nullptr;
+            return acutNewRb(RTNIL);
         }
         case 1:
         {
@@ -87,7 +87,7 @@ static AdsObject ResbufToAdsObject(const resbuf* pRb)
     return AdsObject{};
 }
 
-int AdsObjectMapWrapper::AdsObjectMapcreate()
+int AdsObjectMapWrapper::AdsObjectMapClear()
 {
     pMap.clear();
     return RSRSLT;
@@ -95,20 +95,166 @@ int AdsObjectMapWrapper::AdsObjectMapcreate()
 
 int AdsObjectMapWrapper::AdsObjectMapInsert()
 {
+    int argNum = 0;
+    AdsObject key;
+    AdsObject value;
     AcResBufPtr pArgs(acedGetArgs());
 
-    /* int argNum = 0;
-     int argNumFound = 0;
+    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+    {
+        if (argNum == 0)
+        {
+            if (key = ResbufToAdsObject(pTail); key.index() == 0)
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            argNum++;
+        }
+        else if (argNum == 1)
+        {
+            value = ResbufToAdsObject(pTail);
+            argNum++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (argNum == 2)
+    {
+        pMap.insert({ key,value });
+        acedRetT();
+        return RSRSLT;
+    }
+    acedRetNil();
+    return RSRSLT;
+}
 
-     for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-     {
-         if (argNum == 0)
-         {
-             switch (pTail->restype)
-             {
+int AdsObjectMapWrapper::AdsObjectMapgetat()
+{
+    int argNum = 0;
+    AdsObject key;
+    AcResBufPtr pArgs(acedGetArgs());
+    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+    {
+        if (argNum == 0)
+        {
+            if (key = ResbufToAdsObject(pTail); key.index() == 0)
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            argNum++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (argNum == 1)
+    {
+        if (pMap.contains(key))
+        {
+            const auto& value = pMap.at(key);
+            switch (value.index())
+            {
+                case 0:
+                {
+                    acedRetNil();
+                    return RSRSLT;
+                }
+                case 1:
+                {
+                    acedRetInt(std::get<int>(value));
+                    return RSRSLT;
 
-             };
-         }
-     }*/
+                }
+                case 2:
+                {
+                    acedRetReal(std::get<double>(value));
+                    return RSRSLT;
+                }
+                case 3:
+                {
+                    ads_name name = { 0L };
+                    acdbGetAdsName(name, std::get<AcDbObjectId>(value));
+                    acedRetName(name, RTENAME);
+                    return RSRSLT;
+                }
+                case 4:
+                {
+                    ads_point pnt{};
+                    ZeroMemory(pnt, sizeof(AcGePoint3d));
+                    memcpy_s(pnt, sizeof(AcGePoint2d), asDblArray(std::get<AcGePoint2d>(value)), sizeof(AcGePoint2d));
+                    acedRetPoint(pnt);
+                    return RSRSLT;
+                }
+                case 5:
+                {
+                    ads_point pnt{};
+                    memcpy_s(pnt, sizeof(AcGePoint3d), asDblArray(std::get<AcGePoint3d>(value)), sizeof(AcGePoint3d));
+                    acedRetPoint(pnt);
+                    return RSRSLT;
+
+                }
+                case 6:
+                {
+                    acedRetStr(std::get<std::wstring>(value).c_str());
+                    return RSRSLT;
+                }
+            }
+        }
+    }
+    acedRetNil();
+    return RSRSLT;
+}
+
+int AdsObjectMapWrapper::AdsObjectMapContains()
+{
+    int argNum = 0;
+    AdsObject key;
+    AcResBufPtr pArgs(acedGetArgs());
+    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+    {
+        if (argNum == 0)
+        {
+            if (key = ResbufToAdsObject(pTail); key.index() == 0)
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            argNum++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (argNum == 1)
+    {
+        if (pMap.contains(key))
+        {
+            acedRetT();
+            return RSRSLT;
+        }
+    }
+    acedRetNil();
+    return RSRSLT;
+}
+
+int AdsObjectMapWrapper::AdsObjectMapgetall()
+{
+    AcResBufPtr pResultHead (acutNewRb(RTLB));
+    resbuf* pResultTail = pResultHead.get();
+    for (const auto& item : pMap)
+    {
+        pResultTail = pResultTail->rbnext = acutNewRb(RTLB);
+        pResultTail = pResultTail->rbnext = AdsObjectToResbuf(item.first);
+        pResultTail = pResultTail->rbnext = AdsObjectToResbuf(item.second);
+        pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+    }
+    pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+    acedRetList(pResultHead.get());
     return RSRSLT;
 }

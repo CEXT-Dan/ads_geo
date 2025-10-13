@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "AcGePoint3dTreeAdapter.h"
+#include "AdsMap.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("")
@@ -86,15 +87,47 @@ public:
     {
         return AcGePoint3dTreeWrapper::kdtreedestroy();
     }
+
+    static int ADSPREFIX(mapclear(void))
+    {
+        return AdsObjectMapWrapper::AdsObjectMapClear();
+    }
+
+    static int ADSPREFIX(mapinsert(void))
+    {
+        return AdsObjectMapWrapper::AdsObjectMapInsert();
+    }
+
+    static int ADSPREFIX(mapgetat(void))
+    {
+        return AdsObjectMapWrapper::AdsObjectMapgetat();
+    }
+
+    static int ADSPREFIX(mapcontains(void))
+    {
+        return AdsObjectMapWrapper::AdsObjectMapContains();
+    }
+
+    static int ADSPREFIX(mapgetall(void))
+    {
+        return AdsObjectMapWrapper::AdsObjectMapgetall();
+    }
 };
 
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(ArxAdsGeo)
 #pragma warning ( push )
 #pragma warning( disable: 4838 )
+//tree
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreecreate, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreeradiusSearch, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreeknnSearch, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreepoints, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, kdtreedestroy, false)
+//map
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapclear, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapinsert, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapgetat, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapcontains, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapgetall, false)
 #pragma warning( pop )

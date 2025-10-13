@@ -243,3 +243,11 @@
   (kdtreedestroy)
   kdr
 )
+
+(defun C:TEST4 ()
+  (setq count 0)
+	(while (< count 10)
+		(mapinsert count (nth count lst))
+		(setq count (1+ count))
+	)
+)
