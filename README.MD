@@ -13,11 +13,11 @@ A very fast KDTree(nanoflann) for Autolisp in ObjectARX
 search return value is ((indexs)(distances))
 
 ## map functions
-(mapclear)
-(mapinsert key value)
-(mapgetat key value)
-(mapcontains key)
-(mapgetall)
+-(mapclear)
+-(mapinsert key value)
+-(mapgetat key value)
+-(mapcontains key)
+-(mapgetall)
 
 Allowed types for key or value (int, double, ename, point2d, point3d, string)
 
