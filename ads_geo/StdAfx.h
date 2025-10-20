@@ -71,6 +71,8 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <unordered_set>
+
 //-----------------------------------------------------------------------------
 #include <afxwin.h>				//- MFC core and standard components
 #include <afxext.h>				//- MFC extensions
@@ -217,6 +219,7 @@ namespace std
 
 using AdsObject = std::variant<std::monostate, int, double, AcDbObjectId, AcGePoint2d, AcGePoint3d, std::wstring>;
 typedef std::unordered_map<AdsObject, AdsObject> AdsObjectMap;
+typedef std::unordered_set<AdsObject> AdsObjectSet;
 
 #pragma pack (pop)
 

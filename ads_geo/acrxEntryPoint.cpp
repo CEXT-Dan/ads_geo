@@ -112,6 +112,26 @@ public:
     {
         return AdsObjectMapWrapper::AdsObjectMapgetall();
     }
+
+    static int ADSPREFIX(setclear(void))
+    {
+        return AdsObjectSetWrapper::AdsObjectSetClear();
+    }
+
+    static int ADSPREFIX(setinsert(void))
+    {
+        return AdsObjectSetWrapper::AdsObjectSetInsert();
+    }
+
+    static int ADSPREFIX(setcontains(void))
+    {
+        return AdsObjectSetWrapper::AdsObjectSetContains();
+    }
+
+    static int ADSPREFIX(setgetall(void))
+    {
+        return AdsObjectSetWrapper::AdsObjectSetgetall();
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -130,4 +150,9 @@ ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapinsert, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapgetat, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapcontains, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, mapgetall, false)
+//set
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setclear, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setinsert, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setcontains, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setgetall, false)
 #pragma warning( pop )

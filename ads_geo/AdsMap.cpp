@@ -47,6 +47,7 @@ static resbuf* AdsObjectToResbuf(const AdsObject& adso)
             return pRb;
         }
     }
+    return acutNewRb(RTNIL);
 }
 
 static AdsObject ResbufToAdsObject(const resbuf* pRb)
@@ -87,6 +88,8 @@ static AdsObject ResbufToAdsObject(const resbuf* pRb)
     return AdsObject{};
 }
 
+//-----------------------------------------------------------------------------------------
+//AdsObjectMapWrapper
 int AdsObjectMapWrapper::AdsObjectMapClear()
 {
     pMap.clear();
@@ -253,6 +256,93 @@ int AdsObjectMapWrapper::AdsObjectMapgetall()
         pResultTail = pResultTail->rbnext = AdsObjectToResbuf(item.first);
         pResultTail = pResultTail->rbnext = AdsObjectToResbuf(item.second);
         pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+    }
+    pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+    acedRetList(pResultHead.get());
+    return RSRSLT;
+}
+
+//-----------------------------------------------------------------------------------------
+//AdsObjectSetWrapper
+int AdsObjectSetWrapper::AdsObjectSetClear()
+{
+    pSet.clear();
+    return RSRSLT;
+}
+
+int AdsObjectSetWrapper::AdsObjectSetInsert()
+{
+    int argNum = 0;
+    AdsObject key;
+    AdsObject value;
+    AcResBufPtr pArgs(acedGetArgs());
+
+    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+    {
+        if (argNum == 0)
+        {
+            if (key = ResbufToAdsObject(pTail); key.index() == 0)
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            argNum++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (argNum == 1)
+    {
+        pSet.insert({ key });
+        acedRetT();
+        return RSRSLT;
+    }
+    acedRetNil();
+    return RSRSLT;
+}
+
+int AdsObjectSetWrapper::AdsObjectSetContains()
+{
+    int argNum = 0;
+    AdsObject key;
+    AcResBufPtr pArgs(acedGetArgs());
+    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
+    {
+        if (argNum == 0)
+        {
+            if (key = ResbufToAdsObject(pTail); key.index() == 0)
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            argNum++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (argNum == 1)
+    {
+        if (pSet.contains(key))
+        {
+            acedRetT();
+            return RSRSLT;
+        }
+    }
+    acedRetNil();
+    return RSRSLT;
+}
+
+int AdsObjectSetWrapper::AdsObjectSetgetall()
+{
+    AcResBufPtr pResultHead(acutNewRb(RTLB));
+    resbuf* pResultTail = pResultHead.get();
+    for (const auto& item : pSet)
+    {
+        pResultTail = pResultTail->rbnext = AdsObjectToResbuf(item);
     }
     pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
     acedRetList(pResultHead.get());
