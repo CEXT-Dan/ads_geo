@@ -251,3 +251,11 @@
 		(setq count (1+ count))
 	)
 )
+
+(defun C:TEST5 ()
+  (setq count 0)
+	(while (< count 10)
+		(setinsert (nth count lst))
+		(setq count (1+ count))
+	)
+)
