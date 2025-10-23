@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{a77af6a2-297e-47e4-8824-5ea20518a339}</ProjectGuid>
+    <ProjectGuid>{a77af6a2-297e-47e4-8824-5ea20518a33b}</ProjectGuid>
     <RootNamespace>ads_geo_arx25</RootNamespace>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
-    <ProjectName>ads_geo_arx25</ProjectName>
+    <ProjectName>ads_geo_grx25</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(ProjectName)\$(PlatformName)\$(Configuration)/</IntDir>
     <OutDir>$(SolutionDir)\Bin\$(ProjectName)\$(PlatformName)\$(Configuration)/</OutDir>
-    <TargetExt>.arx</TargetExt>
+    <TargetExt>.grx</TargetExt>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -64,9 +64,9 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WIN64;_WINDOWS;_ARXTARGET;ADSGEO_MODULE;_AFXEXT;_ACRXAPP;ARXAPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;_WINDOWS;_GRXTARGET;ADSGEO_MODULE;_AFXEXT;_ACRXAPP;ARXAPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(ARX2025)\inc;$(ARX2025)\inc-$(PlatformName);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GRX26)\arx\inc;$(GRX26)\arx\inc-$(PlatformName);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -77,7 +77,7 @@
       <ProgramDatabaseFile>$(OutDir)/$(targetname).pdb</ProgramDatabaseFile>
       <ImportLibrary>$(OutDir)/$(targetname).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(ARX2025)\lib;$(ARX2025)\lib-$(PlatformName);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GRX26)\lib;$(GRX26)\lib-$(PlatformName);</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(NOINHERIT)$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -97,9 +97,9 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WIN64;_WINDOWS;_ARXTARGET;ADSGEO_MODULE;NDEBUG;_AFXEXT;_ACRXAPP;ARXAPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;_WINDOWS;_GRXTARGET;ADSGEO_MODULE;NDEBUG;_AFXEXT;_ACRXAPP;ARXAPP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(ARX2025)\inc;$(ARX2025)\inc-$(PlatformName);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GRX26)\arx\inc;$(GRX26)\arx\inc-$(PlatformName);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       </ProgramDatabaseFile>
       <ImportLibrary>$(OutDir)/$(targetname).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(ARX2025)\lib;$(ARX2025)\lib-$(PlatformName);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GRX26)\lib;$(GRX26)\lib-$(PlatformName);</AdditionalLibraryDirectories>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
