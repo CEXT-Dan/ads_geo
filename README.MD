@@ -24,6 +24,17 @@ Wraps std::unordered_map for AutoLisp. While the key can be any of the lisp type
 
 Allowed types for key or value (int, double, ename, point2d, point3d, string)
 
+## set functions
+
+Wraps std::unordered_set for AutoLisp.
+
+- (setclear)
+- (setinsert key value)
+- (setcontains key)
+- (setgetall)
+
+Allowed types for key or value (int, double, ename, point2d, point3d, string)
+
 ## install
 
 appload the arx in the releases
