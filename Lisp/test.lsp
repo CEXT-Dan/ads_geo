@@ -273,7 +273,8 @@
 		(mapinsert n count)
 		(setq count (1+ count))
 	)
-	(mapgetall)
+	(mapgetat (nth 1 lst2))
+	;(mapgetall)
 )
 
 ;(((84.5266 111.278 0.0) 1) ((84.5266 96.2779 0.0) 0) ((84.5266 126.278 0.0) 2))
