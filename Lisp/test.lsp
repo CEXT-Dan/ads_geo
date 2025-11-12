@@ -259,3 +259,21 @@
 		(setq count (1+ count))
 	)
 )
+
+(setq lst2 '((84.5266 96.2779 0.0) 
+       (84.5266 111.278 0.0)
+       (84.5266 126.278 0.0)
+       ))
+       
+; list of points
+(defun C:TEST6 ()
+  (mapclear)
+  (setq count 0)
+	(foreach n lst2
+		(mapinsert n count)
+		(setq count (1+ count))
+	)
+	(mapgetall)
+)
+
+;(((84.5266 111.278 0.0) 1) ((84.5266 96.2779 0.0) 0) ((84.5266 126.278 0.0) 2))
