@@ -29,11 +29,11 @@ Allowed types for key or value (int, double, ename, point2d, point3d, string)
 Wraps std::unordered_set for AutoLisp.
 
 - (setclear)
-- (setinsert key value)
+- (setinsert key)
 - (setcontains key)
 - (setgetall)
 
-Allowed types for key or value (int, double, ename, point2d, point3d, string)
+Allowed types for key (int, double, ename, point2d, point3d, string)
 
 ## install
 
