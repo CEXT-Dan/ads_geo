@@ -18,7 +18,7 @@ Wraps std::unordered_map for AutoLisp. While the key can be any of the lisp type
 
 - (mapclear)
 - (mapinsert key value)
-- (mapgetat key value)
+- (mapgetat key)
 - (mapcontains key)
 - (mapgetall)
 
