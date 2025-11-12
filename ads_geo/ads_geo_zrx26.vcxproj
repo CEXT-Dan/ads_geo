@@ -123,20 +123,25 @@
     <ClCompile Include="AcGePoint3dTreeAdapter.cpp" />
     <ClCompile Include="acrxEntryPoint.cpp" />
     <ClCompile Include="AdsMap.cpp" />
+    <ClCompile Include="DelaunaySolver.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DocData.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VoronoiSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcGePoint3dTreeAdapter.h" />
     <ClInclude Include="AdsMap.h" />
+    <ClInclude Include="delaunator.h" />
+    <ClInclude Include="DelaunaySolver.h" />
     <ClInclude Include="DocData.h" />
     <ClInclude Include="nanoflann.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="VoronoiSolver.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ArxBrxTest.rc" />

@@ -26,6 +26,8 @@
 #include "resource.h"
 #include "AcGePoint3dTreeAdapter.h"
 #include "AdsMap.h"
+#include "VoronoiSolver.h"
+#include "DelaunaySolver.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("")
@@ -132,6 +134,31 @@ public:
     {
         return AdsObjectSetWrapper::AdsObjectSetgetall();
     }
+
+    static int ADSPREFIX(voronoiccm(void))
+    {
+        return VoronoiSolver::voronoiCCMSolverLispFunc();
+    }
+
+    static int ADSPREFIX(voronoicen(void))
+    {
+        return VoronoiSolver::voronoiCENSolverLispFunc();
+    }
+
+    static int ADSPREFIX(delaunay(void))
+    {
+        return DelaunaySolver::delaunaySolverLispFunc();
+    }
+
+    static int ADSPREFIX(delaunayhalfedges(void))
+    {
+        return DelaunaySolver::delaunaySolverLispHalfEdgesFunc();
+    }
+
+    static int ADSPREFIX(delaunaytriangles(void))
+    {
+        return DelaunaySolver::delaunaySolverLispTrianglesFunc();
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -155,4 +182,12 @@ ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setclear, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setinsert, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setcontains, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, setgetall, false)
+//voronoi
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, voronoiccm, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, voronoicen, false)
+//delaunay
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunay, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunayhalfedges, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunaytriangles, false)
+
 #pragma warning( pop )

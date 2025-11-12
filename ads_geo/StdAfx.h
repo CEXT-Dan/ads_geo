@@ -33,7 +33,7 @@
 
 //-----------------------------------------------------------------------------
 #define STRICT
-
+#define NOMINMAX
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN			//- Exclude rarely-used stuff from Windows headers
 #endif
@@ -72,6 +72,7 @@
 #include <sstream>
 #include <algorithm>
 #include <unordered_set>
+#include <execution>
 
 //-----------------------------------------------------------------------------
 #include <afxwin.h>				//- MFC core and standard components
@@ -219,6 +220,17 @@ namespace std
 using AdsObject = std::variant<std::monostate, int, double, AcDbObjectId, AcGePoint2d, AcGePoint3d, std::wstring>;
 typedef std::unordered_map<AdsObject, AdsObject> AdsObjectMap;
 typedef std::unordered_set<AdsObject> AdsObjectSet;
+
+//Voronoiator
+namespace delaunator
+{
+    struct Edge
+    {
+        AcGePoint3d a;
+        AcGePoint3d b;
+    };
+    using Edges = std::vector<Edge>;
+}
 
 #pragma pack (pop)
 
