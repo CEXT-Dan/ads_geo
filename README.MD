@@ -35,6 +35,21 @@ Wraps std::unordered_set for AutoLisp.
 
 Allowed types for key (int, double, ename, point2d, point3d, string)
 
+## delaunay
+
+Wraps delaunay for AutoLisp.
+
+- (delaunay pntlist)
+- (delaunayhalfedges pntlist)
+- (delaunaytriangles pntlist)
+
+## voronoi
+
+Wraps voronoi for AutoLisp.
+
+- (voronoicen pntlist)
+- (voronoiccm pntlist)
+
 ## install
 
 appload the arx in the releases
