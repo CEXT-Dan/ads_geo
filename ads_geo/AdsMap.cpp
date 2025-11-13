@@ -126,7 +126,7 @@ int AdsObjectMapWrapper::AdsObjectMapInsert()
     }
     if (argNum == 2)
     {
-        pMap.insert({ key,value });
+        pMap.emplace(key,value);
         acedRetT();
         return RSRSLT;
     }
@@ -274,7 +274,6 @@ int AdsObjectSetWrapper::AdsObjectSetInsert()
 {
     int argNum = 0;
     AdsObject key;
-    AdsObject value;
     AcResBufPtr pArgs(acedGetArgs());
 
     for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
