@@ -295,7 +295,7 @@ int AdsObjectSetWrapper::AdsObjectSetInsert()
     }
     if (argNum == 1)
     {
-        pSet.insert({ key });
+        pSet.emplace(key);
         acedRetT();
         return RSRSLT;
     }
