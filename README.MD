@@ -56,7 +56,7 @@ appload the arx in the releases
 
 ## Supported platforms
 
-- AutoCAD 2025-2026
+- AutoCAD 2021-2026
 - BricsCAD 2026
 - GstarCAD 2026
 - ZwCAD 2026
