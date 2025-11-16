@@ -246,35 +246,44 @@
 
 (defun C:TEST4 ()
   (setq count 0)
-	(while (< count 10)
-		(mapinsert count (nth count lst))
-		(setq count (1+ count))
-	)
+  (while (< count 10)
+    (mapinsert count (nth count lst))
+    (setq count (1+ count))
+  )
 )
 
 (defun C:TEST5 ()
   (setq count 0)
-	(while (< count 10)
-		(setinsert (nth count lst))
-		(setq count (1+ count))
-	)
+  (while (< count 10)
+    (setinsert (nth count lst))
+    (setq count (1+ count))
+  )
 )
 
-(setq lst2 '((84.5266 96.2779 0.0) 
-       (84.5266 111.278 0.0)
-       (84.5266 126.278 0.0)
+(setq lst2 '(
+       ((84.5266 96.2779 0.0) "PAYLOAD1")
+       ((84.5266 111.278 0.0) "PAYLOAD2")
+       ((84.5266 126.278 0.0) "PAYLOAD3")
        ))
        
-; list of points
 (defun C:TEST6 ()
   (mapclear)
   (setq count 0)
-	(foreach n lst2
-		(mapinsert n count)
-		(setq count (1+ count))
-	)
-	(mapgetat (nth 1 lst2))
-	;(mapgetall)
+  (foreach p lst2
+    (mapinsert (car p) count)
+    (setq count (1+ count))
+  )
+  (princ (mapcontains (car (nth 1 lst2))))
+  (princ "\n")
+  (princ (mapgetat (car (nth 1 lst2))))
+  (princ "\n")
+  (princ (car(cdr(nth (mapgetat (car (nth 1 lst2)))lst2))))
+  (princ "\n")
+  (princ (mapgetall))
+  (princ)
 )
 
-;(((84.5266 111.278 0.0) 1) ((84.5266 96.2779 0.0) 0) ((84.5266 126.278 0.0) 2))
+;; T
+;; 1
+;; PAYLOAD2
+;; (((84.5266 111.278 0.0) 1) ((84.5266 96.2779 0.0) 0) ((84.5266 126.278 0.0) 2))
