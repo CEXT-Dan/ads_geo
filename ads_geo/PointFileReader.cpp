@@ -1,17 +1,6 @@
 #include "stdafx.h"
 #include "PointFileReader.h"
 
-
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files
-#include <windows.h>
-#include "tchar.h"
-#include <iostream>
-#include <string>
-#include <chrono>
-#include <cassert>
-#include <array>
-
 //-==-==-===-=-=-=-==-=-=-=-=--=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
 // PerfTimer
 class PerfTimer
