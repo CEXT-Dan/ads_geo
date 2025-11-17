@@ -243,7 +243,6 @@
   (kdtreedestroy)
   kdr
 )
-
 (defun C:TEST4 ()
   (setq count 0)
   (while (< count 10)
@@ -251,7 +250,6 @@
     (setq count (1+ count))
   )
 )
-
 (defun C:TEST5 ()
   (setq count 0)
   (while (< count 10)
@@ -259,13 +257,10 @@
     (setq count (1+ count))
   )
 )
-
-(setq lst2 '(
-       ((84.5266 96.2779 0.0) "PAYLOAD1")
-       ((84.5266 111.278 0.0) "PAYLOAD2")
+(setq lst2 '(((84.5266 96.2779 0.0) "PAYLOAD1") ((84.5266 111.278 0.0) "PAYLOAD2")
        ((84.5266 126.278 0.0) "PAYLOAD3")
-       ))
-       
+      )
+)
 (defun C:TEST6 ()
   (mapclear)
   (setq count 0)
@@ -277,18 +272,21 @@
   (princ "\n")
   (princ (mapgetat (car (nth 1 lst2))))
   (princ "\n")
-  (princ (car(cdr(nth (mapgetat (car (nth 1 lst2)))lst2))))
+  (princ (car (cdr (nth (mapgetat (car (nth 1 lst2))) lst2))))
   (princ "\n")
   (princ (mapgetall))
   (princ)
 )
-
 ;; T
 ;; 1
 ;; PAYLOAD2
 ;; (((84.5266 111.278 0.0) 1) ((84.5266 96.2779 0.0) 0) ((84.5266 126.278 0.0) 2))
-
 (defun C:TEST7 ()
-  (mapclear)
-  (length(readPNEZD "E:\\PNEZD_2M.txt" ","))
+  (setclear)
+  (foreach p (readPNEZD "E:\\PNEZD_2M.txt" ",")
+    (setinsert (nth 1 p))
+  )
+  (setq l (length (setgetall)))
+  (setclear)
+  l
 )
