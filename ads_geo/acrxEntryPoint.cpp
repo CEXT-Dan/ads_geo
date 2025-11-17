@@ -28,6 +28,7 @@
 #include "AdsMap.h"
 #include "VoronoiSolver.h"
 #include "DelaunaySolver.h"
+#include "PointFileReader.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("")
@@ -159,6 +160,11 @@ public:
     {
         return DelaunaySolver::delaunaySolverLispTrianglesFunc();
     }
+
+    static int ADSPREFIX(readPNEZD(void))
+    {
+        return PointFileReader::AdsReadPNEZD();
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -189,5 +195,7 @@ ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, voronoicen, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunay, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunayhalfedges, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunaytriangles, false)
+//point file reader
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readPNEZD, false)
 
 #pragma warning( pop )

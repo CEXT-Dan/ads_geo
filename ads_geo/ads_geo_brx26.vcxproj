@@ -126,6 +126,7 @@
     <ClCompile Include="DelaunaySolver.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DocData.cpp" />
+    <ClCompile Include="PointFileReader.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -139,6 +140,7 @@
     <ClInclude Include="DelaunaySolver.h" />
     <ClInclude Include="DocData.h" />
     <ClInclude Include="nanoflann.hpp" />
+    <ClInclude Include="PointFileReader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="VoronoiSolver.h" />

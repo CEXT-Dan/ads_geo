@@ -73,6 +73,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <execution>
+#include <filesystem>
 
 //-----------------------------------------------------------------------------
 #include <afxwin.h>				//- MFC core and standard components
