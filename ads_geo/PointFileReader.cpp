@@ -1,30 +1,6 @@
 #include "stdafx.h"
 #include "PointFileReader.h"
 
-//-==-==-===-=-=-=-==-=-=-=-=--=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
-// PerfTimer
-class PerfTimer
-{
-    std::chrono::high_resolution_clock::time_point t1;
-    std::chrono::high_resolution_clock::time_point t2;
-public:
-    PerfTimer();
-    ~PerfTimer() = default;
-    std::string end();
-};
-
-inline PerfTimer::PerfTimer()
-{
-    t1 = std::chrono::high_resolution_clock::now();
-}
-
-inline std::string PerfTimer::end()
-{
-    t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsedTime = duration_cast<std::chrono::duration<double>>(t2 - t1);
-    return std::format("\nDone! {} seconds", elapsedTime.count());
-}
-
 /*
  * strtod.c --
  *
@@ -357,15 +333,8 @@ static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
     return std::make_tuple(true, _pnezdFilePath, _delimiter);
 }
 
-int PointFileReader::AdsReadPNEZD()
+static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter, int _first, int _second, int _third)
 {
-    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
-    if (!success)
-    {
-        acedRetNil();
-        return RSRSLT;
-    }
-
     //read file into memory
     FileHnd fh(CreateFileW(_pnezdFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
     if (fh.hnd() == INVALID_HANDLE_VALUE)
@@ -406,7 +375,6 @@ int PointFileReader::AdsReadPNEZD()
             pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((iter - fv.data()), n - iter)).c_str());
             iter = n + 1;
 
-            //northing
             pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
             char* x = (char*)memchr(iter, _delimiter, endp - iter);
             if (!x) [[unlikely]]
@@ -414,7 +382,7 @@ int PointFileReader::AdsReadPNEZD()
                 acedRetNil();
                 return RSRSLT;
             }
-            pResultTail->resval.rpoint[Y] = strtodd(iter, NULL);
+            pResultTail->resval.rpoint[_first] = strtodd(iter, NULL);
             iter = x + 1;
 
             //easting
@@ -424,7 +392,7 @@ int PointFileReader::AdsReadPNEZD()
                 acedRetNil();
                 return RSRSLT;
             }
-            pResultTail->resval.rpoint[X] = strtodd(iter, NULL);
+            pResultTail->resval.rpoint[_second] = strtodd(iter, NULL);
             iter = y + 1;
 
             //elevation
@@ -434,7 +402,7 @@ int PointFileReader::AdsReadPNEZD()
                 acedRetNil();
                 return RSRSLT;
             }
-            pResultTail->resval.rpoint[Z] = strtodd(iter, NULL);
+            pResultTail->resval.rpoint[_third] = strtodd(iter, NULL);
             iter = z + 1;
 
             //description
@@ -464,6 +432,17 @@ int PointFileReader::AdsReadPNEZD()
     return RSRSLT;
 }
 
+int PointFileReader::AdsReadPNEZD()
+{
+    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
+    if (!success)
+    {
+        acedRetNil();
+        return RSRSLT;
+    }
+    return parse(_pnezdFilePath, _delimiter, Y, X, Z);
+}
+
 int PointFileReader::AdsReadPENZD()
 {
     const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
@@ -472,101 +451,5 @@ int PointFileReader::AdsReadPENZD()
         acedRetNil();
         return RSRSLT;
     }
-
-    //read file into memory
-    FileHnd fh(CreateFileW(_pnezdFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
-    if (fh.hnd() == INVALID_HANDLE_VALUE)
-    {
-        acutPrintf(_T("Error: Could not open input file %ls: "), _pnezdFilePath.c_str());
-        return RSRSLT;
-    }
-    LARGE_INTEGER fileSize;
-    if (!GetFileSizeEx(fh.hnd(), &fileSize))
-    {
-        acutPrintf(_T("Error: Failed to get file size for: %ls: "), _pnezdFilePath.c_str());
-        return RSRSLT;
-    }
-    FileHnd fhm(CreateFileMapping(fh.hnd(), NULL, PAGE_READONLY, 0, 0, NULL));
-    if (fhm.hnd() != INVALID_HANDLE_VALUE)
-    {
-        size_t cb = static_cast<size_t>(fileSize.QuadPart);
-        FileView mv(MapViewOfFile(fhm.hnd(), FILE_MAP_READ, 0, 0, cb), cb);
-        const std::string_view fv = mv.view();
-
-        //list begin
-        AcResBufPtr pResultHead(acutNewRb(RTLB));
-        resbuf* pResultTail = pResultHead.get();
-
-        for (auto iter = fv.data(), endp = fv.data() + fv.length(); iter < endp; iter++)
-        {
-            //sublist begin
-            pResultTail = pResultTail->rbnext = acutNewRb(RTLB);
-
-            //number
-            char* n = (char*)memchr(iter, _delimiter, endp - iter);
-            if (!n) [[unlikely]]
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-            pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((iter - fv.data()), n - iter)).c_str());
-            iter = n + 1;
-
-            //easting
-            pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
-            char* x = (char*)memchr(iter, _delimiter, endp - iter);
-            if (!x) [[unlikely]]
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            pResultTail->resval.rpoint[X] = strtodd(iter, NULL);
-            iter = x + 1;
-
-            //northing
-            char* y = (char*)memchr(iter, _delimiter, endp - iter);
-            if (!y) [[unlikely]]
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            pResultTail->resval.rpoint[Y] = strtodd(iter, NULL);
-            iter = y + 1;
-
-            //elevation
-            char* z = (char*)memchr(iter, _delimiter, endp - iter);
-            if (!z) [[unlikely]]
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            pResultTail->resval.rpoint[Z] = strtodd(iter, NULL);
-            iter = z + 1;
-
-            //description
-            char* d = (char*)memchr(iter, '\r', endp - iter);
-            if (d)
-            {
-                pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((z - fv.data()) + 1, (d - 1) - z)).c_str());
-                iter = d + 1;
-            }
-            else
-            {
-                pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((z - fv.data()) + 1, (endp - 1) - z)).c_str());
-                break;
-            }
-
-            //sublist end
-            pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
-        }
-        //list end
-        pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
-        acedRetList(pResultHead.get());
-        return RSRSLT;
-    }
-    acedRetNil();
-    return RSRSLT;
+    return parse(_pnezdFilePath, _delimiter, X, Y, Z);
 }

@@ -290,3 +290,6 @@
   (setclear)
   l
 )
+
+
+(length (readPNEZD "E:\\PNEZD_1M.txt" ","))
