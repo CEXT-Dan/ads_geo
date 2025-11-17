@@ -315,7 +315,7 @@ private:
     size_t _len = 0;
 };
 
-int PointFileReader::AdsReadPNEZD()
+static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
 {
     int argNum = 0;
     std::filesystem::path _pnezdFilePath;
@@ -329,7 +329,7 @@ int PointFileReader::AdsReadPNEZD()
             if (pTail->restype != RTSTR)
             {
                 acedRetNil();
-                return RSRSLT;
+                return std::make_tuple(false, _pnezdFilePath, _delimiter);
             }
             _pnezdFilePath = pTail->resval.rstring;
             argNum++;
@@ -339,7 +339,7 @@ int PointFileReader::AdsReadPNEZD()
             if (pTail->restype != RTSTR || wcslen(pTail->resval.rstring) == 0)
             {
                 acedRetNil();
-                return RSRSLT;
+                return std::make_tuple(false, _pnezdFilePath, _delimiter);
             }
             _delimiter = pTail->resval.rstring[0];
             argNum++;
@@ -350,6 +350,17 @@ int PointFileReader::AdsReadPNEZD()
         }
     }
     if (argNum != 2)
+    {
+        acedRetNil();
+        return std::make_tuple(false, _pnezdFilePath, _delimiter);
+    }
+    return std::make_tuple(true, _pnezdFilePath, _delimiter);
+}
+
+int PointFileReader::AdsReadPNEZD()
+{
+    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
+    if (!success)
     {
         acedRetNil();
         return RSRSLT;
@@ -455,39 +466,8 @@ int PointFileReader::AdsReadPNEZD()
 
 int PointFileReader::AdsReadPENZD()
 {
-    int argNum = 0;
-    std::filesystem::path _pnezdFilePath;
-    wchar_t _delimiter = ',';
-    AcResBufPtr pArgs(acedGetArgs());
-
-    for (resbuf* pTail = pArgs.get(); pTail != nullptr; pTail = pTail->rbnext)
-    {
-        if (argNum == 0)
-        {
-            if (pTail->restype != RTSTR)
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            _pnezdFilePath = pTail->resval.rstring;
-            argNum++;
-        }
-        else if (argNum == 1)
-        {
-            if (pTail->restype != RTSTR || wcslen(pTail->resval.rstring) == 0)
-            {
-                acedRetNil();
-                return RSRSLT;
-            }
-            _delimiter = pTail->resval.rstring[0];
-            argNum++;
-        }
-        else
-        {
-            break;
-        }
-    }
-    if (argNum != 2)
+    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
+    if (!success)
     {
         acedRetNil();
         return RSRSLT;
