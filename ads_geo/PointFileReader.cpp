@@ -286,15 +286,15 @@ private:
 
 //-==-==-===-=-=-=-==-=-=-=-=--=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
 // FileMap
-class FileMap
+class FileView
 {
 public:
-    FileMap(LPVOID fmap, size_t len)
+    FileView(LPVOID fmap, size_t len)
         :_fmap((char*)fmap), _fend((char*)fmap + len), _len(len)
     {
     }
 
-    ~FileMap()
+    ~FileView()
     {
         if (UnmapViewOfFile(_fmap) == FALSE)
             assert(0);
@@ -360,6 +360,11 @@ int PointFileReader::AdsReadPNEZD()
             break;
         }
     }
+    if (argNum != 2)
+    {
+        acedRetNil();
+        return RSRSLT;
+    }
 
     //read file into memory
     FileHnd fh(CreateFileW(_pnezdFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
@@ -378,7 +383,7 @@ int PointFileReader::AdsReadPNEZD()
     if (fhm.hnd() != INVALID_HANDLE_VALUE)
     {
         size_t cb = static_cast<size_t>(fileSize.QuadPart);
-        FileMap mv(MapViewOfFile(fhm.hnd(), FILE_MAP_READ, 0, 0, cb), cb);
+        FileView mv(MapViewOfFile(fhm.hnd(), FILE_MAP_READ, 0, 0, cb), cb);
         const std::string_view fv = mv.view();
 
         //list begin
