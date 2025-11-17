@@ -50,6 +50,11 @@ Wraps voronoi for AutoLisp.
 - (voronoicen pntlist)
 - (voronoiccm pntlist)
 
+## Points
+
+- (readPNEZD path delim)
+- (readPENZD path delim)
+
 ## install
 
 appload the arx in the releases
