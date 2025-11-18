@@ -294,7 +294,7 @@ private:
 static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
 {
     int argNum = 0;
-    std::filesystem::path _pnezdFilePath;
+    std::filesystem::path _filePath;
     wchar_t _delimiter = ',';
     AcResBufPtr pArgs(acedGetArgs());
 
@@ -303,14 +303,14 @@ static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
         if (argNum == 0)
         {
             if (pTail->restype != RTSTR)
-                return std::make_tuple(false, _pnezdFilePath, _delimiter);
-            _pnezdFilePath = pTail->resval.rstring;
+                return std::make_tuple(false, _filePath, _delimiter);
+            _filePath = pTail->resval.rstring;
             argNum++;
         }
         else if (argNum == 1)
         {
             if (pTail->restype != RTSTR || wcslen(pTail->resval.rstring) == 0)
-                return std::make_tuple(false, _pnezdFilePath, _delimiter);
+                return std::make_tuple(false, _filePath, _delimiter);
             _delimiter = pTail->resval.rstring[0];
             argNum++;
         }
@@ -321,24 +321,24 @@ static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
     }
     if (argNum != 2)
     {
-        return std::make_tuple(false, _pnezdFilePath, _delimiter);
+        return std::make_tuple(false, _filePath, _delimiter);
     }
-    return std::make_tuple(true, _pnezdFilePath, _delimiter);
+    return std::make_tuple(true, _filePath, _delimiter);
 }
 
-static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter, int _first, int _second, int _third)
+static int parse_pxxxd_file(const std::filesystem::path& _filePath, wchar_t _delimiter, int _first, int _second, int _third)
 {
     //read file into memory
-    FileHnd fh(CreateFileW(_pnezdFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
+    FileHnd fh(CreateFileW(_filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
     if (fh.hnd() == INVALID_HANDLE_VALUE)
     {
-        acutPrintf(_T("Error: Could not open input file %ls: "), _pnezdFilePath.c_str());
+        acutPrintf(_T("Error: Could not open input file %ls: "), _filePath.c_str());
         return RSRSLT;
     }
     LARGE_INTEGER fileSize;
     if (!GetFileSizeEx(fh.hnd(), &fileSize))
     {
-        acutPrintf(_T("Error: Failed to get file size for: %ls: "), _pnezdFilePath.c_str());
+        acutPrintf(_T("Error: Failed to get file size for: %ls: "), _filePath.c_str());
         return RSRSLT;
     }
     FileHnd fhm(CreateFileMapping(fh.hnd(), NULL, PAGE_READONLY, 0, 0, NULL));
@@ -427,16 +427,16 @@ static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter
 
 int PointFileReader::AdsReadPNEZD()
 {
-    if (const auto [success, _pnezdFilePath, _delimiter] = getLispArgs(); success)
-        return parse(_pnezdFilePath, _delimiter, Y, X, Z);
+    if (const auto [success, _filePath, _delimiter] = getLispArgs(); success)
+        return parse_pxxxd_file(_filePath, _delimiter, Y, X, Z);
     acedRetNil();
     return RSRSLT;
 }
 
 int PointFileReader::AdsReadPENZD()
 {
-    if (const auto [success, _pnezdFilePath, _delimiter] = getLispArgs(); success)
-        return parse(_pnezdFilePath, _delimiter, X, Y, Z);
+    if (const auto [success, _filePath, _delimiter] = getLispArgs(); success)
+        return parse_pxxxd_file(_filePath, _delimiter, X, Y, Z);
     acedRetNil();
     return RSRSLT;
 }
