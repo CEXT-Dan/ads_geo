@@ -403,13 +403,13 @@ static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter
             if (d)
             {
                 pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((z - fv.data()) + 1, (d - 1) - z)).c_str());
+                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(std::string_view(iter, d - iter)).c_str());
                 iter = d + 1;
             }
             else
             {
                 pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((z - fv.data()) + 1, (endp - 1) - z)).c_str());
+                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(std::string_view(iter, endp - 1)).c_str());
                 break;
             }
 
