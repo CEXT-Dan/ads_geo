@@ -303,20 +303,14 @@ static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
         if (argNum == 0)
         {
             if (pTail->restype != RTSTR)
-            {
-                acedRetNil();
                 return std::make_tuple(false, _pnezdFilePath, _delimiter);
-            }
             _pnezdFilePath = pTail->resval.rstring;
             argNum++;
         }
         else if (argNum == 1)
         {
             if (pTail->restype != RTSTR || wcslen(pTail->resval.rstring) == 0)
-            {
-                acedRetNil();
                 return std::make_tuple(false, _pnezdFilePath, _delimiter);
-            }
             _delimiter = pTail->resval.rstring[0];
             argNum++;
         }
@@ -327,7 +321,6 @@ static auto getLispArgs() -> std::tuple<bool, std::filesystem::path, wchar_t>
     }
     if (argNum != 2)
     {
-        acedRetNil();
         return std::make_tuple(false, _pnezdFilePath, _delimiter);
     }
     return std::make_tuple(true, _pnezdFilePath, _delimiter);
@@ -434,22 +427,16 @@ static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter
 
 int PointFileReader::AdsReadPNEZD()
 {
-    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
-    if (!success)
-    {
-        acedRetNil();
-        return RSRSLT;
-    }
-    return parse(_pnezdFilePath, _delimiter, Y, X, Z);
+    if (const auto [success, _pnezdFilePath, _delimiter] = getLispArgs(); success)
+        return parse(_pnezdFilePath, _delimiter, Y, X, Z);
+    acedRetNil();
+    return RSRSLT;
 }
 
 int PointFileReader::AdsReadPENZD()
 {
-    const auto [success, _pnezdFilePath, _delimiter] = getLispArgs();
-    if (!success)
-    {
-        acedRetNil();
-        return RSRSLT;
-    }
-    return parse(_pnezdFilePath, _delimiter, X, Y, Z);
+    if (const auto [success, _pnezdFilePath, _delimiter] = getLispArgs(); success)
+        return parse(_pnezdFilePath, _delimiter, X, Y, Z);
+    acedRetNil();
+    return RSRSLT;
 }
