@@ -365,7 +365,7 @@ static int parse(const std::filesystem::path& _pnezdFilePath, wchar_t _delimiter
                 return RSRSLT;
             }
             pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-            pResultTail->resval.rstring = StrDupW(utf8_to_wstr(fv.substr((iter - fv.data()), n - iter)).c_str());
+            pResultTail->resval.rstring = StrDupW(utf8_to_wstr(std::string_view(iter, n - iter)).c_str());
             iter = n + 1;
 
             pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
