@@ -364,8 +364,17 @@ static int parse_pxxxd_file(const std::filesystem::path& _filePath, wchar_t _del
                 acedRetNil();
                 return RSRSLT;
             }
-            pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
-            pResultTail->resval.rstring = StrDupW(utf8_to_wstr(std::string_view(iter, n - iter)).c_str());
+            auto sv = std::string_view(iter, n - iter);
+            if(std::isdigit(sv[0]))
+            {
+                pResultTail = pResultTail->rbnext = acutNewRb(RTINT64);
+                pResultTail->resval.rint = static_cast<short>(std::stoll(std::string(sv)));
+            }
+            else
+            {
+                pResultTail = pResultTail->rbnext = acutNewRb(RTSTR);
+                pResultTail->resval.rstring = StrDupW(utf8_to_wstr(sv).c_str());
+            }
             iter = n + 1;
 
             pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
