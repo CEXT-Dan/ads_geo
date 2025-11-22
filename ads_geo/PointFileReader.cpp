@@ -213,8 +213,6 @@ done:
 
 //-==-==-===-=-=-=-==-=-=-=-=--=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
 // utf8_to_wstr
-#pragma warning(push)
-#pragma warning(disable: 4267)
 static std::wstring utf8_to_wstr(const std::string_view str8) noexcept
 {
     const int count = MultiByteToWideChar(CP_UTF8, 0, str8.data(), str8.length(), NULL, 0);
@@ -222,7 +220,6 @@ static std::wstring utf8_to_wstr(const std::string_view str8) noexcept
     MultiByteToWideChar(CP_UTF8, 0, str8.data(), str8.length(), &wstr[0], count);
     return wstr;
 }
-#pragma warning(pop)
 
 //-==-==-===-=-=-=-==-=-=-=-=--=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
 // FileHnd
