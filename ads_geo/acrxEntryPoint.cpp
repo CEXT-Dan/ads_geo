@@ -170,6 +170,11 @@ public:
     {
         return PointFileReader::AdsReadPENZD();
     }
+
+    static int ADSPREFIX(readXYZ(void))
+    {
+        return PointFileReader::AdsReadXYZ();
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -203,5 +208,6 @@ ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunaytriangles, false)
 //point file reader
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readPNEZD, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readPENZD, false)
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readXYZ, false)
 
 #pragma warning( pop )

@@ -431,6 +431,73 @@ static int parse_pxxxd_file(const std::filesystem::path& _filePath, wchar_t _del
     return RSRSLT;
 }
 
+static int parse_xyz_file(const std::filesystem::path& _filePath, wchar_t _delimiter)
+{
+    //read file into memory
+    FileHnd fh(CreateFileW(_filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL));
+    if (fh.hnd() == INVALID_HANDLE_VALUE)
+    {
+        acutPrintf(_T("Error: Could not open input file %ls: "), _filePath.c_str());
+        return RSRSLT;
+    }
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(fh.hnd(), &fileSize))
+    {
+        acutPrintf(_T("Error: Failed to get file size for: %ls: "), _filePath.c_str());
+        return RSRSLT;
+    }
+    FileHnd fhm(CreateFileMapping(fh.hnd(), NULL, PAGE_READONLY, 0, 0, NULL));
+    if (fhm.hnd() != INVALID_HANDLE_VALUE)
+    {
+        size_t cb = static_cast<size_t>(fileSize.QuadPart);
+        FileView mv(MapViewOfFile(fhm.hnd(), FILE_MAP_READ, 0, 0, cb), cb);
+        const std::string_view fv = mv.view();
+
+        //list begin
+        AcResBufPtr pResultHead(acutNewRb(RTLB));
+        resbuf* pResultTail = pResultHead.get();
+
+        for (auto iter = fv.data(), endp = fv.data() + fv.length(); iter < endp; iter++)
+        {
+            pResultTail = pResultTail->rbnext = acutNewRb(RT3DPOINT);
+            char* x = (char*)memchr(iter, _delimiter, endp - iter);
+            if (!x) [[unlikely]]
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            pResultTail->resval.rpoint[X] = strtodd(iter, NULL);
+            iter = x + 1;
+
+            //easting
+            char* y = (char*)memchr(iter, _delimiter, endp - iter);
+            if (!y) [[unlikely]]
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            pResultTail->resval.rpoint[Y] = strtodd(iter, NULL);
+            iter = y + 1;
+
+            //elevation
+            char* z = (char*)memchr(iter, _delimiter, endp - iter);
+            if (!z) [[unlikely]]
+            {
+                acedRetNil();
+                return RSRSLT;
+            }
+            pResultTail->resval.rpoint[Z] = strtodd(iter, NULL);
+            iter = z + 1;
+        }
+        //list end
+        pResultTail = pResultTail->rbnext = acutNewRb(RTLE);
+        acedRetList(pResultHead.get());
+        return RSRSLT;
+    }
+    acedRetNil();
+    return RSRSLT;
+}
+
 int PointFileReader::AdsReadPNEZD()
 {
     if (const auto [success, _filePath, _delimiter] = getLispArgs(); success)
@@ -443,6 +510,14 @@ int PointFileReader::AdsReadPENZD()
 {
     if (const auto [success, _filePath, _delimiter] = getLispArgs(); success)
         return parse_pxxxd_file(_filePath, _delimiter, X, Y, Z);
+    acedRetNil();
+    return RSRSLT;
+}
+
+int PointFileReader::AdsReadXYZ()
+{
+    if (const auto [success, _filePath, _delimiter] = getLispArgs(); success)
+        return parse_xyz_file(_filePath, _delimiter);
     acedRetNil();
     return RSRSLT;
 }
