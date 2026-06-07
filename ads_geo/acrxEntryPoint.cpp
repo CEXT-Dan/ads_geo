@@ -29,6 +29,7 @@
 #include "VoronoiSolver.h"
 #include "DelaunaySolver.h"
 #include "PointFileReader.h"
+#include "ResbufList.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("")
@@ -175,6 +176,18 @@ public:
     {
         return PointFileReader::AdsReadXYZ();
     }
+
+    static int ADSPREFIX(testfoo(void))
+    {
+        AcValue::DataType dt = AcValue::DataType::kUnknown;
+        ResbufList rbl(acedGetArgs());
+        for (const auto& rb : rbl)
+        {
+            AcValue acval(rb);
+            dt = acval.dataType();
+        }
+        return RSRSLT;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -209,5 +222,7 @@ ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, delaunaytriangles, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readPNEZD, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readPENZD, false)
 ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, readXYZ, false)
+
+ACED_ADSSYMBOL_ENTRY_AUTO(ArxAdsGeo, testfoo, false)
 
 #pragma warning( pop )
